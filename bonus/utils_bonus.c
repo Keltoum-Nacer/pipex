@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:06:48 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/26 14:08:30 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/28 17:04:44 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 		return ("");
 	if (start + len > len_s)
 		len = len_s - start;
-	sub = (char *)malloc((len + 1) * sizeof(char));
+	sub = (char *)ft_malloc((len + 1));
 	if (!sub)
 		return (NULL);
 	while (i < len)
@@ -73,7 +73,7 @@ char	*ft_strjoinn(char *s1, char *s2)
 		return (NULL);
 	if (!s1)
 		return (ft_strdup(s2));
-	str = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	str = (char *)ft_malloc((ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!str)
 		return (NULL);
 	i = 0;

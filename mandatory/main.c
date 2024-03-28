@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 15:35:08 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/26 22:59:41 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/28 16:49:18 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	main(int ac, char **av, char **env)
 {
 	t_pipex	pipex;
+	int		status;
 
 	if (ac == 5)
 	{
@@ -28,12 +29,14 @@ int	main(int ac, char **av, char **env)
 		child1_process(av, env, &pipex);
 		close(pipex.fd[0]);
 		close(pipex.fd[1]);
-		waitpid(pipex.p_child1, NULL, 0);
-		waitpid(pipex.p_child2, NULL, 0);
+		waitpid(pipex.p_child1, &status, 0);
+		waitpid(pipex.p_child2, &status, 0);
+		if ( WIFEXITED(status) )
+        	exit(WEXITSTATUS(status));
 	}
 	else
 	{
-		ft_putstr_fd(ft_strjoin("error,you have to put five arguments :",
-				"./pipex <file1> <cmd1> <cmd2> <file2>"), 1);
+		ft_putstr_fd("error,you have to put five arguments :", 1);
+		ft_putstr_fd("./pipex <file1> <cmd1> <cmd2> <file2>", 1);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 21:51:46 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/26 15:08:11 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/28 17:03:27 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,12 @@ typedef struct s_pipe
 	pid_t	p_child1;
 }			t_pipe;
 
+typedef struct s_malloc
+{
+    void            *data;
+    struct s_malloc    *next;
+}                    t_malloc;
+
 void		here_doc(char **av, t_pipe *pipex, char **env);
 void		multiple_pipes(t_pipe *pipex, char **av, char **env, int i);
 void		parent(t_pipe *pipex);
@@ -51,4 +57,7 @@ char		*ft_substr(char *s, unsigned int start, size_t len);
 void		ft_close(t_pipe *pipex);
 void		check_heredoc(t_pipe *pipex, char **av, char **env);
 void		redirect_output(t_pipe *pipex, char **av, char **env);
+void		ft_lstadd_back_m(t_malloc **lst, t_malloc *new);
+t_malloc	*ft_lstnew_m(void *data);
+void		*ft_malloc(size_t size);
 #endif

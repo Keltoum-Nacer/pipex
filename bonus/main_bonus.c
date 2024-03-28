@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 21:51:23 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/26 23:12:55 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/28 17:07:18 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ void	ft_pipe(t_pipe *pipex)
 {
 	int	i;
 
-	pipex->fdd = malloc((pipex->ac - 4) * sizeof(int *));
+	pipex->fdd = ft_malloc((pipex->ac - 4) * sizeof(int *));
 	i = 0;
 	while (i < pipex->ac - 4)
 	{
-		pipex->fdd[i] = malloc(2 * sizeof(int));
+		pipex->fdd[i] = ft_malloc(2 * sizeof(int));
 		i++;
 	}
 	i = 0;
@@ -55,9 +55,7 @@ void	open_files(t_pipe *pipex, char **av, char **env)
 	pipex->file1 = open(av[1], O_RDONLY);
 	pipex->file2 = open(av[pipex->i + 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
 	ft_pipe(pipex);
-	pipex->arr = malloc(sizeof(int) * (pipex->ac - 3));
-	if (!pipex->arr)
-		return ;
+	pipex->arr = ft_malloc(sizeof(int) * (pipex->ac - 3));
 	i = 0;
 	pipex->j = 2;
 	while (pipex->j < pipex->ac - 1)
@@ -74,7 +72,7 @@ void	open_files(t_pipe *pipex, char **av, char **env)
 	}
 }
 
-void	ft_wait(t_pipe *pipex)
+void	ft_wait(t_pipe *pipex, int *status)
 {
 	int	i;
 
@@ -82,7 +80,7 @@ void	ft_wait(t_pipe *pipex)
 	i = 0;
 	while (i < pipex->ac - 3)
 	{
-		waitpid(pipex->arr[i], NULL, 0);
+		waitpid(pipex->arr[i], status, 0);
 		i++;
 	}
 }
@@ -90,6 +88,7 @@ void	ft_wait(t_pipe *pipex)
 int	main(int ac, char **av, char **env)
 {
 	t_pipe	pipex;
+	int status;
 
 	if (ac >= 5)
 	{
@@ -105,8 +104,10 @@ int	main(int ac, char **av, char **env)
 		else
 		{
 			open_files(&pipex, av, env);
-			ft_wait(&pipex);
+			ft_wait(&pipex, &status);
 			free(pipex.arr);
+			if ( WIFEXITED(status) ) 
+        		exit(WEXITSTATUS(status));
 		}
 	}
 	else

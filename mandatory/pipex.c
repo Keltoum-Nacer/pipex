@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 15:32:02 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/26 17:30:19 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/28 12:29:08 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,7 @@ char	*check_path(char **env)
 	path = NULL;
 	while (env[i])
 	{
-		if (!ft_strcmp(env[i], ft_strjoin("PATH=/usr/local/bin:/usr/bin:/bin:",
-					"/usr/sbin:/sbin:/usr/local/munki")))
+		if (!ft_strncmp(env[i], "PATH=", 5))
 		{
 			path = ft_substr(env[i], 5, 62);
 			break ;
@@ -32,11 +31,8 @@ char	*check_path(char **env)
 	return (path);
 }
 
-void	check_patth(char *av, char **env)
+void	check_patth(char *av, char *path)
 {
-	char	*path;
-
-	path = check_path(env);
 	if (!path)
 	{
 		free(path);
@@ -50,16 +46,36 @@ void	check_patth(char *av, char **env)
 		write(2, "bash: ", 6);
 		ft_putstr_fd(av, 2);
 		ft_putstr_fd(": No such file or directory\n", 2);
-		exit(127);
+		exit(1);
 	}
 }
 
-void	check_command(char *av)
+char	*check_buffer(char *av, char **buffer)
 {
-	write(2, "bash: ", 6);
+	char	*exec;
+	char	*cmd;
+	int		i;
+
+	i = 0;
+	cmd = ft_strjoin("/", av);
+	while (buffer[i] != NULL)
+	{
+		exec = ft_strjoin(buffer[i], cmd);
+		if (access(exec, X_OK) == 0)
+			break ;
+		//free(cmd);
+		free(exec);
+		i++;
+	}
+	if (buffer[i] == NULL && access(exec, X_OK) == -1)
+	{
+		free_arr(buffer);
+		write(2, "bash: ", 6);
 	ft_putstr_fd(av, 2);
 	ft_putstr_fd(": command not found\n", 2);
 	exit(127);
+	}
+	return (exec);
 }
 
 char	*find_path(char *av, char **env)
@@ -67,28 +83,15 @@ char	*find_path(char *av, char **env)
 	char	*path;
 	char	**buffer;
 	char	*exec;
-	int		i;
-
-	i = 0;
+	
 	if (access(av, X_OK) == 0)
 		return (av);
 	path = check_path(env);
-	check_patth(av, env);
+	check_patth(av, path);
 	buffer = ft_split(path, ':');
-	while (buffer[i] != NULL)
-	{
-		exec = ft_strjoin(buffer[i], ft_strjoin("/", av));
-		if (access(exec, X_OK) == 0)
-			break ;
-		free(exec);
-		i++;
-	}
-	if (buffer[i] == NULL && access(exec, X_OK) == -1)
-	{
-		free_arr(buffer);
-		check_command(av);
-	}
-	return (exec);
+	free(path);
+	exec = check_buffer(av, buffer);
+	return(exec);
 }
 
 void	execute_cmd(char *av, char **env)

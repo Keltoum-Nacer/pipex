@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 19:02:36 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/24 15:14:22 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/28 17:08:40 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,16 @@ typedef struct s_pipex
 	int		file1;
 	int		file2;
 	int		fd[2];
+	int		exit_failure;
 	pid_t	p_child1;
 	pid_t	p_child2;
 }			t_pipex;
+
+typedef struct s_malloc
+{
+    void            *data;
+    struct s_malloc    *next;
+}                    t_malloc;
 
 void		child1_process(char **av, char **env, t_pipex *pipex);
 void		child2_process(char **av, char **env, t_pipex *pipex);
@@ -47,5 +54,8 @@ int			ft_strcmp(char *s1, char *s2);
 char		*ft_substr(char *s, unsigned int start, size_t len);
 char		**free_arr(char **arr);
 int			ft_strncmp(char *s1, char *s2, size_t n);
+void		ft_lstadd_back_m(t_malloc **lst, t_malloc *new);
+t_malloc	*ft_lstnew_m(void *data);
+void		*ft_malloc(size_t size);
 
 #endif
