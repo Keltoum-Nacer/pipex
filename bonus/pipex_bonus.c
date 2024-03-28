@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 15:47:01 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/27 22:44:08 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/26 23:10:57 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ char	*check_path(char **env)
 	path = NULL;
 	while (env[i])
 	{
-		if (!ft_strncmp(env[i], "PATH=", 5))
+		if (!ft_strcmp(env[i], ft_strjoinn("PATH=/usr/local/bin:/usr/bin:/bin:",
+					"/usr/sbin:/sbin:/usr/local/munki")))
 		{
 			path = ft_substr(env[i], 5, 62);
 			break ;
@@ -31,8 +32,11 @@ char	*check_path(char **env)
 	return (path);
 }
 
-void	check_patth(char *av, char *path)
+void	check_patth(char *av, char **env)
 {
+	char	*path;
+
+	path = check_path(env);
 	if (!path)
 	{
 		free(path);
@@ -50,32 +54,12 @@ void	check_patth(char *av, char *path)
 	}
 }
 
-char	*check_buffer(char *av, char **buffer)
+void	check_cmd(char *av)
 {
-	char	*exec;
-	char	*cmd;
-	int		i;
-
-	i = 0;
-	cmd = ft_strjoinn("/", av);
-	while(buffer[i] != NULL)
-	{
-		exec = ft_strjoinn(buffer[i], cmd);
-		if (access(exec, X_OK) == 0)
-			break;
-		free(exec);
-		i++;
-	}
-	if (buffer[i] == NULL && access(exec, X_OK) == -1)
-	{
-		free_arr(buffer);
-		write(2, "bash: ", 6);
-		ft_putstr_fd(av, 2);
-		ft_putstr_fd(": command not found\n", 2);
-		while(1);
-		exit(127);
-	}
-	return(exec);
+	write(2, "bash: ", 6);
+	ft_putstr_fd(av, 2);
+	ft_putstr_fd(": command not found\n", 2);
+	exit(127);
 }
 
 char	*find_path(char *av, char **env)
@@ -83,14 +67,27 @@ char	*find_path(char *av, char **env)
 	char	*path;
 	char	**buffer;
 	char	*exec;
-	
+	int		i;
+
+	i = 0;
 	if (access(av, X_OK) == 0)
 		return (av);
 	path = check_path(env);
-	check_patth(av, path);
+	check_patth(av, env);
 	buffer = ft_split(path, ':');
-	free(path);
-	exec = check_buffer(av, buffer);
+	while (buffer[i] != NULL)
+	{
+		exec = ft_strjoinn(buffer[i], ft_strjoinn("/", av));
+		if (access(exec, X_OK) == 0)
+			break ;
+		free(exec);
+		i++;
+	}
+	if (buffer[i] == NULL && access(exec, X_OK) == -1)
+	{
+		free_arr(buffer);
+		check_cmd(av);
+	}
 	return (exec);
 }
 

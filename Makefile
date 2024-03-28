@@ -21,7 +21,8 @@ clean:
 	rm -f $(OFILES) $(BOFILES)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(BNAME)
+
 re: fclean all
 
 phony: all clean fclean re

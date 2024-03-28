@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 15:35:08 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/27 19:48:27 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/26 22:59:41 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	main(int ac, char **av, char **env)
 {
 	t_pipex	pipex;
-	int		status;
 
 	if (ac == 5)
 	{
@@ -29,12 +28,8 @@ int	main(int ac, char **av, char **env)
 		child1_process(av, env, &pipex);
 		close(pipex.fd[0]);
 		close(pipex.fd[1]);
-		waitpid(pipex.p_child1, &status, 0);
-		waitpid(pipex.p_child2, &status, 0);
-		if ( WIFEXITED(status) ) {
-        int exit_failure = WEXITSTATUS(status);
-        printf("Exit status was %d\n", exit_failure);
-		}
+		waitpid(pipex.p_child1, NULL, 0);
+		waitpid(pipex.p_child2, NULL, 0);
 	}
 	else
 	{

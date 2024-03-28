@@ -6,7 +6,7 @@
 /*   By: knacer <knacer@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 15:50:32 by knacer            #+#    #+#             */
-/*   Updated: 2024/03/27 19:44:47 by knacer           ###   ########.fr       */
+/*   Updated: 2024/03/26 17:57:16 by knacer           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	child2_process(char **av, char **env, t_pipex *pipex)
 		close(pipex->fd[1]);
 		close(pipex->file2);
 		close(pipex->fd[0]);
-		execute_cmd(av[3], env, pipex);
+		execute_cmd(av[3], env);
 	}
 }
 
@@ -83,7 +83,7 @@ void	child1_process(char **av, char **env, t_pipex *pipex)
 		close(pipex->fd[0]);
 		close(pipex->file1);
 		close(pipex->fd[1]);
-		execute_cmd(av[2], env, pipex);
+		execute_cmd(av[2], env);
 	}
 	else
 		child2_process(av, env, pipex);
